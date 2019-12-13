@@ -29,14 +29,25 @@ import org.w3c.dom.NodeList;
 /**
  * @author Clinton Begin
  */
+// 对原始Node的一个包装
 public class XNode {
 
+  // 原始node对象
   private final Node node;
+  // node name
   private final String name;
+  // node body
   private final String body;
+  // node attribute的值（用传进来的（Properties）variables 处理过）
   private final Properties attributes;
+  // 传进来的（Properties）variables
   private final Properties variables;
+  // Node的解析器
   private final XPathParser xpathParser;
+
+  public XNode newXNode(Node node) {
+    return new XNode(xpathParser, node, variables);
+  }
 
   public XNode(XPathParser xpathParser, Node node, Properties variables) {
     this.xpathParser = xpathParser;
@@ -45,10 +56,6 @@ public class XNode {
     this.variables = variables;
     this.attributes = parseAttributes(node);
     this.body = parseBody(node);
-  }
-
-  public XNode newXNode(Node node) {
-    return new XNode(xpathParser, node, variables);
   }
 
   public XNode getParent() {

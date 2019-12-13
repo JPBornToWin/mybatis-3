@@ -13,25 +13,23 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.apache.ibatis.autoconstructor;
+package org.apache.ibatis.autoconstructor.mapper;
 
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.autoconstructor.entity.User;
 
 import java.util.List;
 
-public interface AutoConstructorMapper {
-  @Select("SELECT * FROM subject WHERE id = #{id}")
-  PrimitiveSubject getSubject(final int id);
+@Mapper
+public interface UserMapper {
+  @Select("SELECT * FROM user WHERE id = #{id}")
+  User getUser(final int id);
 
-  @Select("SELECT * FROM subject")
-  List<PrimitiveSubject> getSubjects();
+  @Select("SELECT * FROM user")
+  List<User> getUsers();
 
-  @Select("SELECT * FROM subject")
-  List<AnnotatedSubject> getAnnotatedSubjects();
-
-  @Select("SELECT * FROM subject")
-  List<BadSubject> getBadSubjects();
-
-  @Select("SELECT * FROM extensive_subject")
-  List<ExtensiveSubject> getExtensiveSubjects();
+  @Insert("insert into user (name, create_time, age) values(#{name}, #{creatTime}, #{age})")
+  Integer saveUser(User user);
 }

@@ -207,20 +207,32 @@ public class XPathParser {
     return xnodes;
   }
 
+  // mybatis-config.xml解析
   public XNode evalNode(String expression) {
     return evalNode(document, expression);
   }
 
   public XNode evalNode(Object root, String expression) {
+
+    // 解析得到一个Node对象
     Node node = (Node) evaluate(expression, root, XPathConstants.NODE);
     if (node == null) {
       return null;
     }
+    // 封装成XNode
     return new XNode(this, node, variables);
   }
 
+  /**
+   *
+   * @param expression xpath表达式
+   * @param root 解析对象的根节点
+   * @param returnType 解析后返回的对象的类型
+   * @return 解析结果
+   */
   private Object evaluate(String expression, Object root, QName returnType) {
     try {
+      // xpath -> xpath解析器 new this 对象的时候创建
       return xpath.evaluate(expression, root, returnType);
     } catch (Exception e) {
       throw new BuilderException("Error evaluating XPath.  Cause: " + e, e);
@@ -265,10 +277,14 @@ public class XPathParser {
   }
 
   private void commonConstructor(boolean validation, Properties variables, EntityResolver entityResolver) {
+    // 校验xml
     this.validation = validation;
+    // xml解析器
     this.entityResolver = entityResolver;
+    // 一些传进来的属性
     this.variables = variables;
     XPathFactory factory = XPathFactory.newInstance();
+    // 创建xpath解析器
     this.xpath = factory.newXPath();
   }
 

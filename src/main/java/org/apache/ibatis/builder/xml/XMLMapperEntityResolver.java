@@ -30,6 +30,10 @@ import org.xml.sax.SAXException;
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
+
+/**
+ * mybatis xml 文件的解析器
+ */
 public class XMLMapperEntityResolver implements EntityResolver {
 
   private static final String IBATIS_CONFIG_SYSTEM = "ibatis-3-config.dtd";
@@ -48,6 +52,13 @@ public class XMLMapperEntityResolver implements EntityResolver {
    * @return The InputSource for the DTD
    *
    * @throws org.xml.sax.SAXException If anything goes wrong
+   */
+  /**
+   *
+   * @param publicId 如 -> "-//mybatis.org//DTD Config 3.0//EN"
+   * @param systemId 如 -> "http://mybatis.org/dtd/mybatis-3-config.dtd" 或者 "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+   * @return
+   * @throws SAXException
    */
   @Override
   public InputSource resolveEntity(String publicId, String systemId) throws SAXException {

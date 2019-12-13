@@ -66,6 +66,7 @@ public class XMLConfigBuilder extends BaseBuilder {
   }
 
   public XMLConfigBuilder(Reader reader, String environment, Properties props) {
+    // 创建xpath解析器 第三个参数是mybatis xml文件的解析器
     this(new XPathParser(reader, true, props, new XMLMapperEntityResolver()), environment, props);
   }
 
@@ -83,26 +84,42 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   private XMLConfigBuilder(XPathParser parser, String environment, Properties props) {
     super(new Configuration());
+    // 记录流程基于 threadLocal
     ErrorContext.instance().resource("SQL Mapper Configuration");
+    // 上两行代码创建在父类里面的configuration props -> null
     this.configuration.setVariables(props);
+    // 没有开始解析
     this.parsed = false;
+//    environment -> null
     this.environment = environment;
+    // 解析原始mybatis xml的解析器
     this.parser = parser;
   }
 
+  // 这个方法只能调用一次
   public Configuration parse() {
+    // 初始是false表示未解析xml
     if (parsed) {
       throw new BuilderException("Each XMLConfigBuilder can only be used once.");
     }
+    // 解析开始
     parsed = true;
+    // 解析配置文件里面的configuration节点
     parseConfiguration(parser.evalNode("/configuration"));
     return configuration;
   }
 
+  /**
+   * 处理得到 configuration 对应 XNode对象
+   * @param root 封装了node
+   */
   private void parseConfiguration(XNode root) {
     try {
       //issue #117 read properties first
+
+      // configuration节点下的Properties节点
       propertiesElement(root.evalNode("properties"));
+
       Properties settings = settingsAsProperties(root.evalNode("settings"));
       loadCustomVfs(settings);
       loadCustomLogImpl(settings);
@@ -218,11 +235,17 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 对properties节点解析处理 主要作用就是把得到的properties全部都加入到configuration里面保存
+   * @param context
+   * @throws Exception
+   */
   private void propertiesElement(XNode context) throws Exception {
     if (context != null) {
       Properties defaults = context.getChildrenAsProperties();
       String resource = context.getStringAttribute("resource");
       String url = context.getStringAttribute("url");
+      // resource 和 url 只能有一个
       if (resource != null && url != null) {
         throw new BuilderException("The properties element cannot specify both a URL and a resource based property file reference.  Please specify one or the other.");
       }
@@ -235,7 +258,9 @@ public class XMLConfigBuilder extends BaseBuilder {
       if (vars != null) {
         defaults.putAll(vars);
       }
+      // 保存到解析器
       parser.setVariables(defaults);
+      // 保存到配置器
       configuration.setVariables(defaults);
     }
   }
