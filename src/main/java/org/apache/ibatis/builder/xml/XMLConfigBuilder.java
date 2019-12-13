@@ -117,20 +117,30 @@ public class XMLConfigBuilder extends BaseBuilder {
     try {
       //issue #117 read properties first
 
-      // configuration节点下的Properties节点
+      // 处理 configuration节点下的Properties节点
       propertiesElement(root.evalNode("properties"));
-
+      // 处理 settings 标签 settings主要是配置mybatis的一些运行策略例如超时线程数目等等
       Properties settings = settingsAsProperties(root.evalNode("settings"));
+      // TODO 配置一个自定义虚拟文件
       loadCustomVfs(settings);
+      // 配置日志
       loadCustomLogImpl(settings);
+      // 配置java类型缩写映射
       typeAliasesElement(root.evalNode("typeAliases"));
+      // 配置插件通过反射实例化出自定义插件保存到Configuration
       pluginElement(root.evalNode("plugins"));
+      // TODO 对象工厂工厂作用暂时未知
       objectFactoryElement(root.evalNode("objectFactory"));
+      // TODO 对象包装工厂
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
+      // 反射工厂
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
+      // 设置自定义属性的值
       settingsElement(settings);
       // read it after objectFactory and objectWrapperFactory issue #631
+      // 解析运行环境对象
       environmentsElement(root.evalNode("environments"));
+
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
       typeHandlerElement(root.evalNode("typeHandlers"));
       mapperElement(root.evalNode("mappers"));
@@ -154,6 +164,7 @@ public class XMLConfigBuilder extends BaseBuilder {
     return props;
   }
 
+  // 配置自定义虚拟文件
   private void loadCustomVfs(Properties props) throws ClassNotFoundException {
     String value = props.getProperty("vfsImpl");
     if (value != null) {
@@ -299,7 +310,9 @@ public class XMLConfigBuilder extends BaseBuilder {
       if (environment == null) {
         environment = context.getStringAttribute("default");
       }
+      // 可能有多种运行环境
       for (XNode child : context.getChildren()) {
+        // 拿到 environment id 标签的值
         String id = child.getStringAttribute("id");
         if (isSpecifiedEnvironment(id)) {
           TransactionFactory txFactory = transactionManagerElement(child.evalNode("transactionManager"));
